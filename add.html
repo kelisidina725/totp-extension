@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>验证码 · 管理</title>
+  <link rel="stylesheet" href="add.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2 4 5v6c0 5 3.4 9.2 8 11 4.6-1.8 8-6 8-11V5l-8-3Z"></path>
+            <path d="M9 12l2 2 4-4"></path>
+          </svg>
+        </span>
+        <div class="brand-text">
+          <h1>验证码</h1>
+          <p>二步验证账号管理</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <input id="searchInput" type="search" placeholder="搜索账号" autocomplete="off" spellcheck="false">
+        </div>
+        <button id="exportBtn" class="ghost-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path>
+          </svg>
+          导出备份
+        </button>
+        <button id="addBtn" class="primary-btn">＋ 添加账号</button>
+      </div>
+    </header>
+
+    <div class="notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="10" width="14" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+      </svg>
+      <span>所有密钥仅保存在本浏览器本地存储中，不会上传到任何服务器。</span>
+    </div>
+
+    <div class="columns">
+      <section class="panel-card">
+        <h2>添加账号</h2>
+        <nav class="tabs">
+          <button class="tab active" data-tab="manual">手动添加</button>
+          <button class="tab" data-tab="scan">扫码导入</button>
+          <button class="tab" data-tab="migrate">迁移密钥库</button>
+        </nav>
+
+        <div class="panel active" id="panel-manual">
+          <form id="manualForm" class="form">
+            <label>名称 <input name="name" required maxlength="60"></label>
+            <label>密钥（Base32）
+              <span class="input-with-action">
+                <input name="secret" required spellcheck="false">
+                <button type="button" id="toggleSecret" class="eye-btn" title="显示/隐藏密钥">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </span>
+            </label>
+            <div class="row">
+              <label>位数
+                <select name="digits"><option value="6" selected>6 位</option><option value="7">7 位</option><option value="8">8 位</option></select>
+              </label>
+              <label>周期（秒）
+                <select name="period"><option value="30" selected>30</option><option value="60">60</option></select>
+              </label>
+              <label>算法
+                <select name="algorithm"><option value="SHA1" selected>SHA1</option><option value="SHA256">SHA256</option><option value="SHA512">SHA512</option></select>
+              </label>
+            </div>
+            <div class="preview" id="manualPreview">填写密钥后可预览当前验证码</div>
+            <button type="submit" class="primary-btn wide">添加账号</button>
+          </form>
+        </div>
+
+        <div class="panel" id="panel-scan">
+          <div class="scan-box">
+            <div class="scan-illustration" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                <path d="M8 18v-6a4 4 0 0 1 4-4h6"></path><path d="M30 8h6a4 4 0 0 1 4 4v6"></path>
+                <path d="M40 30v6a4 4 0 0 1-4 4h-6"></path><path d="M18 40h-6a4 4 0 0 1-4-4v-6"></path>
+                <path d="M16 24h16"></path>
+              </svg>
+            </div>
+            <h3>粘贴截图识别二维码</h3>
+            <p class="scan-hint">复制二维码截图后按 <code>Ctrl+V</code> 粘贴，或点击下方按钮读取剪贴板。</p>
+            <div class="scan-actions">
+              <button id="pasteBtn" class="ghost-btn">粘贴识别</button>
+              <label class="ghost-btn file-label">上传二维码图片
+                <input type="file" id="imageInput" accept="image/*" hidden>
+              </label>
+            </div>
+            <div class="preview" id="scanPreview">识别后显示解析结果</div>
+            <button id="confirmScan" class="primary-btn wide" disabled>确认添加</button>
+          </div>
+        </div>
+
+        <div class="panel" id="panel-migrate">
+          <div class="scan-box">
+            <p class="scan-hint">支持 <code>.neustorage</code> / JSON 备份、单行或多行 <code>otpauth://</code> 凭证文本，或直接粘贴内容。</p>
+            <label class="ghost-btn file-label">选择文件（.neustorage / .json / .txt）
+              <input type="file" id="migrateInput" accept=".neustorage,.json,.txt,application/json,text/plain" hidden>
+            </label>
+            <textarea id="migrateText" rows="7" spellcheck="false" placeholder="otpauth://totp/GitHub:user?secret=ABCDEF&amp;issuer=GitHub&#10;或 JSON 数组"></textarea>
+            <div class="preview" id="migratePreview">尚未解析</div>
+            <button id="confirmMigrate" class="primary-btn wide" disabled>导入账号</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-card">
+        <div class="section-head">
+          <h2>已保存账号</h2>
+          <span class="badge" id="accountCount">0</span>
+        </div>
+        <div id="accountList"></div>
+        <div class="backup-foot">
+          <p>建议定期导出备份，更换设备时可通过备份文件恢复。</p>
+          <div class="backup-actions">
+            <button id="importBtn" class="ghost-btn">导入备份</button>
+            <button id="exportBtn2" class="ghost-btn">导出备份 JSON</button>
+          </div>
+          <input type="file" id="importInput" accept=".json,application/json" hidden>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="totp.js"></script>
+  <script src="otpauth.js"></script>
+  <script src="lib/jsQR.js"></script>
+  <script src="add.js"></script>
+</body>
+</html>
