@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TOTP 验证码管理器",
   "short_name": "TOTP",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "本地生成 TOTP 验证码，支持手动添加、扫码导入与现有密钥库迁移。",
   "permissions": ["storage", "clipboardRead", "clipboardWrite"],
   "action": {

@@ -1,0 +1,5 @@
+.workbuddy/
+release/
+
+# 自动备份产物：含明文密钥，禁止入库
+totp-accounts.json

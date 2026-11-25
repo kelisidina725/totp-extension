@@ -123,12 +123,22 @@
           <h2>已保存账号</h2>
           <span class="badge" id="accountCount">0</span>
         </div>
+        <p class="sort-hint">拖动左侧手柄可调整账号顺序</p>
         <div id="accountList"></div>
         <div class="backup-foot">
           <p>建议定期导出备份，更换设备时可通过备份文件恢复。</p>
           <div class="backup-actions">
             <button id="importBtn" class="ghost-btn">导入备份</button>
             <button id="exportBtn2" class="ghost-btn">导出备份 JSON</button>
+          </div>
+          <div class="auto-backup">
+            <div class="auto-backup-head"><span>自动保存到 Documents</span><span id="autoBackupStatus" class="auto-backup-status">未设置</span></div>
+            <div class="backup-actions">
+              <button id="autoBackupConnect" class="ghost-btn">设置自动保存位置</button>
+              <button id="autoBackupReconnect" class="ghost-btn" hidden>重新连接</button>
+              <button id="autoBackupDisconnect" class="ghost-btn" hidden>断开</button>
+            </div>
+            <p class="auto-backup-hint">首次点击后在对话框选择 Documents 文件夹，之后密钥变动会自动写入其中的 totp-accounts.json。</p>
           </div>
           <input type="file" id="importInput" accept=".json,application/json" hidden>
         </div>
@@ -139,6 +149,9 @@
   <script src="totp.js"></script>
   <script src="otpauth.js"></script>
   <script src="lib/jsQR.js"></script>
+  <script src="drag-sort.js"></script>
+  <script src="ui-modal.js"></script>
+  <script src="file-backup.js"></script>
   <script src="add.js"></script>
 </body>
 </html>
